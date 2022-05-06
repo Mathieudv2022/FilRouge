@@ -1,10 +1,11 @@
 pipeline {
-  //  environment {
+   environment {
   //    ID_DOCKER = "choco1992"
       IMAGE_NAME = "django"
       IMAGE_TAG = "latest"  
   //    DOCKERHUB_PASSWORD = credentials('dockerhubpassword')
-  //  }could not translate host name "postgres" to address: Name or service not known
+  //could not translate host name "postgres" to address: Name or service not known
+   }
   agent none
   stages {
     stage('Build image') {

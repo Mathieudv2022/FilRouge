@@ -9,26 +9,26 @@ pipeline {
   }
 
   stages {
-        stage('test3') {
-            steps {
-                script {
-                    if (env.GIT_BRANCH == 'master') {
-                        echo 'I only execute on the master branch'
-                    } else {
-                        echo 'I execute elsewhere'
-                    }
+    stage('test3') {
+        steps {
+            script {
+                if (env.GIT_BRANCH == 'origin/main') {
+                    echo 'I only execute on the master branch'
+                } else {
+                    echo 'I execute elsewhere'
                 }
             }
         }
+    }
 
-    // stage('Build image - Front End Django only') {
-    //   agent any
-    //   steps {
-    //     script {
-    //       sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG ./'
-    //     }
-    //   }
-    // }
+    stage('Build image - Front End Django only') {
+      agent any
+      steps {
+        script {
+          sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG ./'
+        }
+      }
+    }
 
     // stage('Run container based on builded image (Django only-no DB)') {
     //   agent any

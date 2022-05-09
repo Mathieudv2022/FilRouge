@@ -3,24 +3,12 @@ pipeline {
   environment {
     ID_DOCKER = "matt2022dockertp"
     IMAGE_NAME = "django"
-    // IMAGE_TAG = "nightly"
+    IMAGE_TAG = $TAG
     DOCKERHUB_PASSWORD = credentials('dockerhubpassword')
     IMAGE_POSTGRES = "docker.io/postgres:14.2-alpine"
   }
 
   stages {
-    stage('test3') {
-        steps {
-            script {
-                sh 'printenv'
-                if ($GIT_BRANCH == 'origin/main') {
-                    echo 'I only execute on the master branch'
-                } else {
-                    echo $GIT_BRANCH
-                }
-            }
-        }
-    }
 
     stage('Build image - Front End Django only') {
       agent any

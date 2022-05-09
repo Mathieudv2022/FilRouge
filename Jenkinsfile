@@ -21,7 +21,6 @@ pipeline {
       steps {
         script {
           sh '''
-            docker rm -f $(docker ps -aq)
             docker run --name $IMAGE_NAME -d -p 8000:8000 ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
             sleep 5
           '''
@@ -58,7 +57,6 @@ pipeline {
       steps {
         script {
           sh '''
-            docker rm -f $(docker ps -aq)
             docker-compose up -d
             sleep 10
           '''

@@ -18,40 +18,41 @@ pipeline {
     //     }
     //   }
     // }
-
-    parallel {
-      stage('Run container based on builded image (Django only-no DB)') {
-        agent any
-        steps {
-          script {
-            sh '''
-              docker rm -f $IMAGE_NAME
-              docker run --rm --name $IMAGE_NAME -d -p 8000:8000 ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
-              sleep 5
-              docker logs django > filelog
-              if grep -q Retry filelog; then echo "Successfully failed: no db response!"; else exit 1; fi;
-              docker stop $IMAGE_NAME
-            '''
+    stage('test images'){
+      parallel {
+        stage('Run container based on builded image (Django only-no DB)') {
+          agent any
+          steps {
+            script {
+              sh '''
+                docker rm -f $IMAGE_NAME
+                docker run --rm --name $IMAGE_NAME -d -p 8000:8000 ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
+                sleep 5
+                docker logs django > filelog
+                if grep -q Retry filelog; then echo "Successfully failed: no db response!"; else exit 1; fi;
+                docker stop $IMAGE_NAME
+              '''
+            }
           }
         }
-      }
 
-      stage('Test Fonctionnel: Database Postgres only') {
-        agent any
-        steps {
-          script {
-            sh '''
-              docker rm -f postgres
-              docker run -tdi --rm --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres $IMAGE_POSTGRES
-              sleep 5
-              docker exec postgres psql --username=postgres
-              docker stop postgres
-            '''
+        stage('Test Fonctionnel: Database Postgres only') {
+          agent any
+          steps {
+            script {
+              sh '''
+                docker rm -f postgres
+                docker run -tdi --rm --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres $IMAGE_POSTGRES
+                sleep 5
+                docker exec postgres psql --username=postgres
+                docker stop postgres
+              '''
+            }
           }
         }
       }
     }
-
+    
     stage('Build & Run Appli Django complète = 2 running containers') {
       agent any
       steps {

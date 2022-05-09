@@ -13,10 +13,10 @@ pipeline {
       agent any
       steps{
         script {
-          if (env.GIT_BRANCH == 'origin/main'){
+          if ($GIT_BRANCH == 'origin/main'){
             IMAGE_TAG = "staging"
           } 
-          if (env.GIT_BRANCH == 'origin/release') {
+          if ($GIT_BRANCH == 'origin/release') {
             IMAGE_TAG = "latest"
           }
         }

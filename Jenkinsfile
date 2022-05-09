@@ -15,7 +15,7 @@ pipeline {
                 if (env.GIT_BRANCH == 'origin/main') {
                     echo 'I only execute on the master branch'
                 } else {
-                    echo 'I execute elsewhere'
+                    echo env.GIT_BRANCH
                 }
             }
         }

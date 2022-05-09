@@ -15,8 +15,8 @@ pipeline {
       steps {
         script {
           sh 'echo $TAG'
-          sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG ./'
           sh 'pritenv'
+          sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG ./'
         }
       }
     }

@@ -12,7 +12,7 @@ services:
       - POSTGRES_PASSWORD=postgres
 
   web:
-    image: docker.io/matt2022dockertp/django:latest
+    image: docker.io/matt2022dockertp/django:nightly
     ports:
       - "8000:8000"
     environment:

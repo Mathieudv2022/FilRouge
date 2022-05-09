@@ -1,13 +1,24 @@
 pipeline {
-   environment {
-      ID_DOCKER = "matt2022dockertp"
-      IMAGE_NAME = "django"
-      IMAGE_TAG = "nightly"
-      DOCKERHUB_PASSWORD = credentials('dockerhubpassword')
-      IMAGE_POSTGRES = "docker.io/postgres:14.2-alpine"
-   }
   agent none
+
+  environment {
+    ID_DOCKER = "matt2022dockertp"
+    IMAGE_NAME = "django"
+    // IMAGE_TAG = "nightly"
+    DOCKERHUB_PASSWORD = credentials('dockerhubpassword')
+    IMAGE_POSTGRES = "docker.io/postgres:14.2-alpine"
+  }
+
   stages {
+    stage('Init vars') {
+      if (env.GIT_BRANCH == 'origin/main'){
+        IMAGE_TAG = "staging"
+      } 
+      if (env.GIT_BRANCH == 'origin/release') {
+        IMAGE_TAG = "latest"
+      }
+    }
+
     stage('Build image - Front End Django only') {
       agent any
       steps {
@@ -16,6 +27,7 @@ pipeline {
         }
       }
     }
+
     stage('Run container based on builded image (Django only-no DB)') {
       agent any
       steps {
@@ -24,11 +36,11 @@ pipeline {
             docker rm -f $IMAGE_NAME
             docker run --rm --name $IMAGE_NAME -d -p 8000:8000 ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
             sleep 5
-            printenv
           '''
         }
       }
     }
+
     stage('Test Successfull: Django is active and NOK on Access- cause missing-Database') {
       agent any
       steps {
@@ -41,6 +53,7 @@ pipeline {
         }
       }
     }
+
     stage('Test Fonctionnel: Database Postgres only') {
       agent any
       steps {
@@ -55,6 +68,7 @@ pipeline {
         }
       }
     }
+
     stage('Build & Run Appli Django complète = 2 running containers') {
       agent any
       steps {
@@ -66,6 +80,7 @@ pipeline {
         }
       }
     }
+
      stage('Test image Appli Django complète (avec sa DB Postgres)') {
        agent any
        steps {
@@ -76,6 +91,7 @@ pipeline {
          }
        }
      }
+
      stage('Clean Container de Django only') {
        agent any
        steps {
@@ -86,6 +102,7 @@ pipeline {
          }
        }
      }
+
       stage('Login and Push de Django Image (only) on Docker hub') {
         agent any
         steps {
@@ -97,5 +114,6 @@ pipeline {
          }
        }
      }
+
   }
 }

@@ -4,7 +4,7 @@ pipeline {
       IMAGE_NAME = "django"
       IMAGE_TAG = "nightly"
       DOCKERHUB_PASSWORD = credentials('dockerhubpassword')
-      IMAGE_POSTGRES = "docker.io/postgres/postgres:14.2-alpine"
+      IMAGE_POSTGRES = "docker.io/postgres:14.2-alpine"
    }
   agent none
   stages {

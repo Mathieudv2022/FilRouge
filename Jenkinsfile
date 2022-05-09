@@ -21,7 +21,7 @@ pipeline {
       steps {
         script {
           sh '''
-            docker run --name $IMAGE_NAME -d -p 8000:8000 ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
+            docker run --rm --name $IMAGE_NAME -d -p 8000:8000 ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
             sleep 5
           '''
         }
@@ -32,9 +32,9 @@ pipeline {
       steps {
         script {
           sh '''
-            docker logs django > test
-            if grep -q Retry test; then echo "Successfully failed: no db response!"; else exit 1; fi;
-            docker rm -f test
+            docker logs django > filelog
+            if grep -q Retry filelog; then echo "Successfully failed: no db response!"; else exit 1; fi;
+            docker stop $IMAGE_NAME
           '''
         }
       }

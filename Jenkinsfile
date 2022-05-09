@@ -3,23 +3,23 @@ pipeline {
   environment {
     ID_DOCKER = "matt2022dockertp"
     IMAGE_NAME = "django"
-    // IMAGE_TAG = "nightly"
+    IMAGE_TAG = "nightly"
     DOCKERHUB_PASSWORD = credentials('dockerhubpassword')
     IMAGE_POSTGRES = "docker.io/postgres:14.2-alpine"
   }
 
   stages {
-    stage('Hello') {
-        steps {
-          script {
-            if ($GIT_BRANCH == 'main') {
-                echo 'Hello from main branch'
-            } else {
-                sh "echo 'Hello from ${env.BRANCH_NAME} branch!'"
-            }
-          }
-        }
-    }
+    // stage('Hello') {
+    //     steps {
+    //       script {
+    //         if ($GIT_BRANCH == 'main') {
+    //             echo 'Hello from main branch'
+    //         } else {
+    //             sh "echo 'Hello from ${env.BRANCH_NAME} branch!'"
+    //         }
+    //       }
+    //     }
+    // }
 
     stage('Build image - Front End Django only') {
       agent any

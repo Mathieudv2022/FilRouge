@@ -3,7 +3,7 @@ pipeline {
   environment {
     ID_DOCKER = "matt2022dockertp"
     IMAGE_NAME = "django"
-    IMAGE_TAG = ${TAG}
+    IMAGE_TAG = "${TAG}"
     DOCKERHUB_PASSWORD = credentials('dockerhubpassword')
     IMAGE_POSTGRES = "docker.io/postgres:14.2-alpine"
   }
@@ -14,6 +14,7 @@ pipeline {
       agent any
       steps {
         script {
+          sh 'echo $TAG'
           sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG ./'
         }
       }

@@ -10,6 +10,7 @@ pipeline {
   }
 
   stages {
+    agent none
     stage('Init vars') {
       if (env.GIT_BRANCH == 'origin/main'){
         IMAGE_TAG = "staging"

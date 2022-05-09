@@ -2,27 +2,16 @@ pipeline {
    environment {
       ID_DOCKER = "matt2022dockertp"
       IMAGE_NAME = "django"
-      IMAGE_TAG = "latest"  
+      IMAGE_TAG = "nightly"
       DOCKERHUB_PASSWORD = credentials('dockerhubpassword')
-  //could not translate host name "postgres" to address: Name or service not known
    }
   agent none
   stages {
-    stage('Git clone provisoire via script') {
-      agent any
-      steps {
-        script {
-          sh 'sudo rm -rf FilRouge'
-          sh 'docker rm -f django'
-          sh 'git clone https://github.com/Relativ-IT/FilRouge.git'
-        }
-      }
-    }
     stage('Build image - Front End Django only') {
       agent any
       steps {
         script {
-          sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG ./FilRouge'
+          sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG ./'
         }
       }
     }
@@ -32,7 +21,7 @@ pipeline {
         script {
           sh '''
             docker rm -f $(docker ps -aq)
-            docker run --name $IMAGE_NAME -d -p 8000:8000 $IMAGE_NAME:$IMAGE_TAG
+            docker run --name $IMAGE_NAME -d -p 8000:8000 ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
             sleep 5
           '''
         }
@@ -45,7 +34,7 @@ pipeline {
           sh '''
             docker logs django > test
             if grep -q Retry test; then echo "Successfully failed: no db response!"; else exit 1; fi;
-        
+            docker rm -f test
           '''
         }
       }
@@ -55,11 +44,10 @@ pipeline {
       steps {
         script {
           sh '''
-            docker rm -f test
-            docker run -tdi --name test -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres docker.io/postgres
+            docker run -tdi --rm --name test -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres docker.io/postgres:postgres:14.2-alpine
             sleep 5
             docker exec test psql --username=postgres
-            docker rm -f test
+            docker stop test
           '''
         }
       }
@@ -70,7 +58,6 @@ pipeline {
         script {
           sh '''
             docker rm -f $(docker ps -aq)
-            cd ./FilRouge
             docker-compose up -d
             sleep 10
           '''
@@ -81,9 +68,9 @@ pipeline {
        agent any
        steps {
          script {
-           sh '''
-           curl http://localhost:8000 | grep -i "album"
-        '''
+          sh '''
+            curl http://localhost:8000 | grep -i "album"
+          '''
          }
        }
      }
@@ -92,9 +79,8 @@ pipeline {
        steps {
          script {
            sh '''
-           docker stop filrouge_web_1
-           docker rm filrouge_web_1
-        '''
+            docker-compose down
+          '''
          }
        }
      }
@@ -103,61 +89,11 @@ pipeline {
         steps {
           script {
             sh '''
-                 echo $DOCKERHUB_PASSWORD | docker login -u $ID_DOCKER --password-stdin
-                 docker push ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
-        '''
+              echo $DOCKERHUB_PASSWORD | docker login -u $ID_DOCKER --password-stdin
+              docker push ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
+            '''
          }
        }
      }
-    // stage('Prepare ansible environment') {
-    //   agent any
-    //   environment {
-    //     PRIVATE_KEY = credentials('private_keys_jenkins')
-    //   }
-    //   steps {
-    //     sh ''
-    //     '
-    //     cp $PRIVATE_KEY id_rsa
-    //     chmod 600 id_rsa
-    //       ''
-    //     '
-    //   }
-    // }
-    // stage('Push image in staging and deploy it') {
-    //   agent any
-    //   steps {
-    //     script {
-    //       sh ''
-    //       '
-    //       cd $WORKSPACE / ansible && ansible - playbook playbooks / deploy_app.yml--private - key.. / id_rsa - e env = staging ''
-    //       '
-    //     }
-    //   }
-    // }
-    // stage('Push image in production and deploy it') {
-    //   when {
-    //     expression {
-    //       GIT_BRANCH == 'origin/master'
-    //     }
-    //   }
-    //   agent any
-    //   steps {
-    //     script {
-    //       sh ''
-    //       '
-    //       cd $WORKSPACE / ansible && ansible - playbook playbooks / deploy_app.yml--private - key.. / id_rsa - e env = prod ''
-    //       '
-    //     }
-    //   }
-    // }
-    // stage('Remove temp files') {
-    //   agent any
-    //   steps {
-    //     sh ''
-    //     '
-    //     rm - fr $WORKSPACE / ansible / id_rsa ''
-    //     '
-    //   }
-    // }
   }
 }

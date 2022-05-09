@@ -13,10 +13,13 @@ pipeline {
       agent any
       steps{
         script {
+          sh 'echo start init vars'
           if ($GIT_BRANCH == 'origin/main'){
+            echo 'main'
             IMAGE_TAG = "staging"
           } 
           if ($GIT_BRANCH == 'origin/release') {
+            echo 'release'
             IMAGE_TAG = "latest"
           }
         }

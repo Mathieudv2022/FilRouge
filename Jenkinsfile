@@ -24,6 +24,7 @@ pipeline {
             docker rm -f $IMAGE_NAME
             docker run --rm --name $IMAGE_NAME -d -p 8000:8000 ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
             sleep 5
+            echo env.BRANCH_NAME
           '''
         }
       }

@@ -12,6 +12,7 @@ pipeline {
     stage('test3') {
         steps {
             script {
+                sh 'printenv'
                 if ($GIT_BRANCH == 'origin/main') {
                     echo 'I only execute on the master branch'
                 } else {

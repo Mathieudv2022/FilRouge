@@ -11,12 +11,14 @@ pipeline {
   stages {
     stage('Init vars') {
       agent any
-      script {
-        if (env.GIT_BRANCH == 'origin/main'){
-          IMAGE_TAG = "staging"
-        } 
-        if (env.GIT_BRANCH == 'origin/release') {
-          IMAGE_TAG = "latest"
+      steps{
+        script {
+          if (env.GIT_BRANCH == 'origin/main'){
+            IMAGE_TAG = "staging"
+          } 
+          if (env.GIT_BRANCH == 'origin/release') {
+            IMAGE_TAG = "latest"
+          }
         }
       }
     }

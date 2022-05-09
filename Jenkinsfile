@@ -1,6 +1,5 @@
 pipeline {
   agent none
-
   environment {
     ID_DOCKER = "matt2022dockertp"
     IMAGE_NAME = "django"
@@ -10,8 +9,8 @@ pipeline {
   }
 
   stages {
-    agent none
     stage('Init vars') {
+      agent any
       if (env.GIT_BRANCH == 'origin/main'){
         IMAGE_TAG = "staging"
       } 

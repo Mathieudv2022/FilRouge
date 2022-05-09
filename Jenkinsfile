@@ -10,14 +10,14 @@ pipeline {
 
   stages {
 
-    stage('Build image - Front End Django only') {
-      agent any
-      steps {
-        script {
-          sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG ./'
-        }
-      }
-    }
+    // stage('Build image - Front End Django only') {
+    //   agent any
+    //   steps {
+    //     script {
+    //       sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG ./'
+    //     }
+    //   }
+    // }
 
     parallel {
       stage('Run container based on builded image (Django only-no DB)') {

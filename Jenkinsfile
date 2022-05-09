@@ -4,6 +4,7 @@ pipeline {
       IMAGE_NAME = "django"
       IMAGE_TAG = "nightly"
       DOCKERHUB_PASSWORD = credentials('dockerhubpassword')
+      IMAGE_POSTGRES = "docker.io/postgres/postgres:14.2-alpine"
    }
   agent none
   stages {
@@ -44,7 +45,7 @@ pipeline {
       steps {
         script {
           sh '''
-            docker run -tdi --rm --name test -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres docker.io/postgres:postgres:14.2-alpine
+            docker run -tdi --rm --name test -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres $IMAGE_POSTGRES
             sleep 5
             docker exec test psql --username=postgres
             docker stop test

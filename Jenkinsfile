@@ -9,17 +9,18 @@ pipeline {
   }
 
   stages {
-    // stage('Hello') {
-    //     steps {
-    //       script {
-    //         if ($GIT_BRANCH == 'main') {
-    //             echo 'Hello from main branch'
-    //         } else {
-    //             sh "echo 'Hello from ${env.BRANCH_NAME} branch!'"
-    //         }
-    //       }
-    //     }
-    // }
+    stage('Hello') {
+        steps {
+          script {
+            sh 'echo $GIT_BRANCH'
+            if ($GIT_BRANCH == 'main') {
+                echo 'Hello from main branch'
+            } else {
+                sh "echo 'Hello from $GIT_BRANCH branch!'"
+            }
+          }
+        }
+    }
 
     stage('Build image - Front End Django only') {
       agent any

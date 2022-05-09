@@ -1,73 +1,114 @@
 pipeline {
    environment {
-  //    ID_DOCKER = "choco1992"
+      ID_DOCKER = "matt2022dockertp"
       IMAGE_NAME = "django"
       IMAGE_TAG = "latest"  
-  //    DOCKERHUB_PASSWORD = credentials('dockerhubpassword')
+      DOCKERHUB_PASSWORD = credentials('dockerhubpassword')
   //could not translate host name "postgres" to address: Name or service not known
    }
   agent none
   stages {
-    stage('Build image') {
+    stage('Git clone provisoire via script') {
       agent any
       steps {
         script {
-          sh 'docker build -t localhost/$IMAGE_NAME:$IMAGE_TAG .'
+          sh 'sudo rm -rf FilRouge'
+          sh 'docker rm -f django'
+          sh 'git clone https://github.com/Relativ-IT/FilRouge.git'
         }
       }
     }
-    stage('Run container based on builded image') {
+    stage('Build image - Front End Django only') {
+      agent any
+      steps {
+        script {
+          sh 'docker build -t ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG ./FilRouge'
+        }
+      }
+    }
+    stage('Run container based on builded image (Django only-no DB)') {
       agent any
       steps {
         script {
           sh '''
-            docker run --name $IMAGE_NAME -d -p 8000:8000 localhost/$IMAGE_NAME:$IMAGE_TAG
+            docker rm -f $(docker ps -aq)
+            docker run --name $IMAGE_NAME -d -p 8000:8000 $IMAGE_NAME:$IMAGE_TAG
             sleep 5
           '''
         }
       }
     }
-    // stage('Test image') {
-    //   agent any
-    //   steps {
-    //     script {
-    //       sh ''
-    //       '
-    //       curl http: //jenkins | grep -i "dimension"
-    //         ''
-    //       '
-    //     }
-    //   }
-    // }
-    // stage('Clean Container') {
-    //   agent any
-    //   steps {
-    //     script {
-    //       sh ''
-    //       '
-    //       docker stop $IMAGE_NAME
-    //       docker rm $IMAGE_NAME
-    //         ''
-    //       '
-    //     }
-    //   }
-    // }
-    // stage('Login and Push Image on docker hub') {
-    //   agent any
-    //   steps {
-    //     script {
-    //       sh ''
-    //       '
-    //       echo $DOCKERHUB_PASSWORD | docker login - u $ID_DOCKER--password - stdin
-    //       docker push $ {
-    //         ID_DOCKER
-    //       }
-    //       /$IMAGE_NAME:$IMAGE_TAG
-    //       ''
-    //       '
-    //     }
-    //   }
-    // }
+    stage('Test Successfull: Django is active and NOK on Access- cause missing-Database') {
+      agent any
+      steps {
+        script {
+          sh '''
+            docker logs django > test
+            if grep -q Retry test; then echo "Successfully failed: no db response!"; else exit 1; fi;
+        
+          '''
+        }
+      }
+    }
+    stage('Test Fonctionnel: Database Postgres only') {
+      agent any
+      steps {
+        script {
+          sh '''
+            docker rm -f test
+            docker run -tdi --name test -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres docker.io/postgres
+            sleep 5
+            docker exec test psql --username=postgres
+            docker rm -f test
+          '''
+        }
+      }
+    }
+    stage('Build & Run Appli Django complète = 2 running containers') {
+      agent any
+      steps {
+        script {
+          sh '''
+            docker rm -f $(docker ps -aq)
+            cd ./FilRouge
+            docker-compose up -d
+            sleep 10
+          '''
+        }
+      }
+    }
+     stage('Test image Appli Django complète (avec sa DB Postgres)') {
+       agent any
+       steps {
+         script {
+           sh '''
+           curl http://localhost:8000 | grep -i "album"
+        '''
+         }
+       }
+     }
+     stage('Clean Container de Django only') {
+       agent any
+       steps {
+         script {
+           sh '''
+           docker stop filrouge_web_1
+           docker rm filrouge_web_1
+        '''
+         }
+       }
+     }
+      stage('Login and Push de Django Image (only) on Docker hub') {
+        agent any
+        steps {
+          script {
+            sh '''
+                 echo $DOCKERHUB_PASSWORD | docker login -u $ID_DOCKER --password-stdin
+                 docker push ${ID_DOCKER}/$IMAGE_NAME:$IMAGE_TAG
+        '''
+         }
+       }
+     }
     // stage('Prepare ansible environment') {
     //   agent any
     //   environment {

@@ -3,7 +3,7 @@ pipeline {
   environment {
     ID_DOCKER = "matt2022dockertp"
     IMAGE_NAME = "django"
-    // IMAGE_TAG = "nightly"
+    IMAGE_TAG = "nightly"
     DOCKERHUB_PASSWORD = credentials('dockerhubpassword')
     IMAGE_POSTGRES = "docker.io/postgres:14.2-alpine"
   }

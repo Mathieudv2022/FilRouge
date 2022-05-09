@@ -12,7 +12,7 @@ pipeline {
     stage('test3') {
         steps {
             script {
-                if (env.GIT_BRANCH == 'origin/main') {
+                if (GIT_BRANCH == 'origin/main') {
                     echo 'I only execute on the master branch'
                 } else {
                     echo env.GIT_BRANCH

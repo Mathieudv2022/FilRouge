@@ -9,21 +9,18 @@ pipeline {
   }
 
   stages {
-    stage('Init vars') {
-      agent any
-      steps{
-        script {
-          sh 'echo start init vars'
-          if ($GIT_BRANCH == 'origin/main'){
-            echo 'main'
-            IMAGE_TAG = "staging"
-          } 
-          if ($GIT_BRANCH == 'origin/release') {
-            echo 'release'
-            IMAGE_TAG = "latest"
-          }
+    stages {
+        stage('Hello') {
+            steps {
+                script {
+                    if (env.BRANCH_NAME == 'main') {
+                        echo 'Hello from main branch'
+                    }  else {
+                        sh "echo 'Hello from ${env.BRANCH_NAME} branch!'"
+                    }
+                    }
+            }
         }
-      }
     }
 
     stage('Build image - Front End Django only') {

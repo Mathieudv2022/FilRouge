@@ -30,10 +30,13 @@
         url: https://download.docker.com/linux/centos/docker-ce.repo
         dest: /etc/yum.repos.d/docker-ce.repo
 
-    - name: Install Docker
-      yum: 
-        name: docker 
+    - name: Install Docker & docker compose
+      yum:
+        name: "{{item}}"
         state: latest
+      loop:
+        - docker
+        - docker-compose
 
     - name: Start and enable the Docker daemon
       service: 

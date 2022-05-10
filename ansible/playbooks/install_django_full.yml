@@ -8,10 +8,9 @@
     - name: deploy app
       copy: 
         src: ../../docker-compose.yaml
-        dst: /opt/docker-compose.yaml
+        dest: /opt/docker-compose.yaml
 
     - name: run app
       command: docker-compose up -d -f /opt/docker-compose.yaml
-      command: sleep 10
 
 ...

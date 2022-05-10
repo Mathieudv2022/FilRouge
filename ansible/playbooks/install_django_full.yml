@@ -1,5 +1,5 @@
 ---
-- name: "Static Website Installation"
+- name: "Install django full avec DB"
   become: yes
   hosts: "{{ env }}"
   vars:

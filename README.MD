@@ -1,71 +1,55 @@
 # Group 4 : Django webapp CICD
 
-## 1- Goal
-The goal of this project is to verify your ability to automate build and deploy containerized applications.
-In fact the most completed your pipeline will be, the most higher will be your rating.
-The rule is simple: Use at least all the recommended tools for this exercise to create your pipeline.
-The most appreciated pipeline need to implement the following pattern :
+## #1 Goal
+
+This project is a proof of concept (PoC) of a running pyhton app that need a postgres database.
+:warning: The code here must not be used in production as we will only use the default python http server and default password
+
+The app was given as is by EAZYTraining
+
+## #2 Used tools
+
+In order to achieve our goal we used :
+
+- Docker : Used to build, run and test the Frontend image
+- Docker-compose : Used to run and test the full app, python with postgres
+- Jenkins : Used to run all tests, delivering et deploying
+- Ansible : Driven by Jenkins, used to deploy the full app on production & staging worker nodes
+- GitHub : Used to store, share, organize source code and team work
+- Vagrant : Used to build some demo VMs thanks to EAZYTraining
+
+## #3 GitHub architecture
+
+There are 2 major branches
+
+- Main : The developpement branch where commits are first merged
+- release : Used for production ready deployments, merged are done manualy from main once all funcionnal tests have been done from staging deployment.
+
+## #4 Delivery architecture
+
+Artefacts are the `docker` images build by `jenkins` and are stored in the public docker hub `registry` under 2 tags :
+
+- staging : This is the developpement tag used for staging environment
+- release : Can be interpreted as the `latest` usually encountered.
+
+## #5 Deployment architecture
+
+The 2 major branches, `Main` and `release`, are intended to run app in, respectively, `staging` and `production` environment worker nodes defined in the `Ansible playbook`
+The 2 worker nodes are deployed using `vagrant` files given by EAZYTraining
+
+- Centos 7 with :
+  - Docker
+  - Python
+
+## #6 Security
+
+We didn't hardened our PoC as it's a Poc with harcoded password, default python http server and so on, we well know that !
+
+## #6 how to
+
+You can't use this code out of the box, some information are hardcoded so they will not fit your environment 
+You should be able to run the `docker-compose.yaml` file, just run this command :
+
+```shell
+docker-compose up -d -f ./docker-compose.yaml
 ```
- build ->  Test -> scan -> push -> Deploy (Prod and  Preprod) -> Test -> Monitor
-```
-But you don't have to implement all the steps above.
-
-## 2- Recommended Tools
-
-- jenkins
-- docker-compose
-- portus
-- ssh
-
-For the docker-compose.yml file (which will be used for deployment), please see the file below and get inspiration from it
-
-```
-version: '3.3'
-
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    expose:
-      - "8000"
-    ports:
-      - "8000:8000"
-    links:
-      - postgres
-  postgres:
-    image: postgres:9
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-```      
-
-## 3- Build
-
-For build step you need to produce a Dockerfile to containerize application.
-For this project we recommend you **python:3** for base image
-
-## 4- Security
-
-The security is an important aspect of this project, please make sure that you keep in mind security bests practises when you write script or any other action you made, because we will pay a special attention to that went we will review your work
-
-## 5- Delivrable
-
-At the end of the project you must provide us:
-- A documentation of your work with screenshots
-- A Powerpoint the present your work to the audience
-- All your source through a documented GitHub repo
-
-## 6- Have Fun
-
-Feel free to add some extra steps, extra tools to make your pipeline more powerful (code analysis, so on and so forth)
-We want you to enjoy yourself in this project and explore new possibility offers by the devops world
-
-## 7- Author
-This project was created par EAZYTraining, please do not share it, duplicate it ...
-To contact us : contact@eazytraining.fr
-
-LAST THING ...
-![good luck](https://user-images.githubusercontent.com/18481009/84582398-cad38100-adeb-11ea-95e3-2a9d4c0d5437.gif)

@@ -129,7 +129,7 @@ pipeline {
                }
            }
      }
-     stage('Deploy Staging env.') {
+     stage('Deploy Production env.') {
           when {
               expression { GIT_BRANCH == 'origin/release' }
           }

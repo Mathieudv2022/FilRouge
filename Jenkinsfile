@@ -10,7 +10,7 @@ pipeline {
 
   stages {
 
-    stage('Build image - Front End Django only') {
+    stage('Build Front-End Image') {
       agent any
       steps {
         script {
@@ -19,7 +19,7 @@ pipeline {
       }
     }
 
-    stage('Run container based on builded image (Django only-no DB)') {
+    stage('Run Front-End container') {
       agent any
       steps {
         script {
@@ -32,7 +32,7 @@ pipeline {
       }
     }
 
-    stage('Test Successfull: Django is active and NOK on Access- cause missing-Database') {
+    stage('Failure testing of Front-End missing-DB') {
       agent any
       steps {
         script {
@@ -45,7 +45,7 @@ pipeline {
       }
     }
 
-    stage('Test Fonctionnel: Database Postgres only') {
+    stage('Postgres Functional test') {
       agent any
       steps {
         script {
@@ -60,7 +60,7 @@ pipeline {
       }
     }
 
-    stage('Build & Run Appli Django complète = 2 running containers') {
+    stage('Run Django Full App') {
       agent any
       steps {
         script {
@@ -72,7 +72,7 @@ pipeline {
       }
     }
 
-     stage('Test image Appli Django complète (avec sa DB Postgres)') {
+     stage('Test Django Full App') {
        agent any
        steps {
          script {
@@ -83,7 +83,7 @@ pipeline {
        }
      }
 
-     stage('Clean Container de Django only') {
+     stage('Django App Shutdown') {
        agent any
        steps {
          script {
@@ -94,7 +94,7 @@ pipeline {
        }
      }
 
-      stage('Login and Push de Django Image (only) on Docker hub') {
+      stage('Front-End image artefact Delivery (on Docker hub)') {
         agent any
         steps {
           script {
@@ -106,7 +106,7 @@ pipeline {
        }
      }
         
-     stage('Prepare ansible environment') {
+     stage('Prepare Ansible Deployment environment') {
             agent any
             environment {
                 PRIVATE_KEY = credentials('private_keys_jenkins')
@@ -119,7 +119,7 @@ pipeline {
             }
      }          
           
-     stage('Push image in staging and deploy it') { 
+     stage('Deploy Staging env.') { 
            agent any
            steps {
                script {
@@ -129,7 +129,7 @@ pipeline {
                }
            }
      }
-     stage('Push image in production and deploy it') {
+     stage('Deploy Production env.') {
           when {
               expression { GIT_BRANCH == 'origin/release' }
           }
@@ -144,12 +144,12 @@ pipeline {
      }
           
      stage('Remove temp files') {
-            agent any
-            steps {
-                sh '''
-                     rm -fr $WORKSPACE/ansible/id_rsa
-                '''
-            }
+        agent any
+        steps {
+            sh '''
+                  rm -fr $WORKSPACE/ansible/id_rsa
+            '''
+        }
      }            
   }
 }

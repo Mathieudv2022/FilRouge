@@ -1,0 +1,17 @@
+---
+- name: "Installation complete Django et DB"
+  become: yes
+  hosts: "{{ env }}"
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+    - name: deploy app
+      copy: 
+        src: ../../docker-compose.yaml
+        dest: /opt/docker-compose.yaml
+
+    - name: run app
+      command: docker-compose up -d -f /opt/docker-compose.yaml
+
+
+...

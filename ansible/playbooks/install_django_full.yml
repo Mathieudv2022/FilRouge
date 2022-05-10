@@ -1,0 +1,12 @@
+---
+- name: "Installation complete Django et DB"
+  become: yes
+  hosts: "{{ env }}"
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+    - name: install djanjo complete
+      command: docker-compose up -d
+      command: sleep 10
+
+...

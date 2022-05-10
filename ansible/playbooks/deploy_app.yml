@@ -2,6 +2,6 @@
 - name: "install docker"
   import_playbook: docker.yml
 
-- name: "deploy static_website"
-  import_playbook: static_website.yml
+- name: "deploy django_full"
+  import_playbook: install_django_full.yml
 ...

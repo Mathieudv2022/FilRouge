@@ -14,7 +14,7 @@
         name: "postgres"
         image: "docker.io/postgres:14.2-alpine"
         state: started
-        environment:
+        env:
           POSTGRES_DB: postgres
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres

@@ -5,14 +5,34 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
   tasks:
+    - name: Create network
+      community.docker.docker_network:
+        name: django 
+
     - name: Create default containers
       docker_container:
-        name: "static-website-ib"
-        image: "choco1992/static-website-ib:v1"
+        name: "postgres"
+        image: "docker.io/postgres:14.2-alpine"
         state: started
+        environment:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        networks: 
+          - name: django
         restart: "yes"
-        ports: "80:80"
-        env:
-          PORT: "80"
 
+    - name: Create default containers
+      docker_container:
+        name: "django"
+        image: "docker.io/matt2022dockertp/django:nightly"
+        state: started
+        env:
+          POSTGRES_NAME: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        networks: 
+          - name: django
+        restart: "yes"
+        ports: "8000:8000"
 ...

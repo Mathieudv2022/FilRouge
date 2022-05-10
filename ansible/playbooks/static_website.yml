@@ -5,11 +5,11 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
   tasks:
-    - name: Create network
+    - name: Create django network
       community.docker.docker_network:
         name: django 
 
-    - name: Create default containers
+    - name: Create postgres containers
       community.docker.docker_container:
         name: "postgres"
         image: "docker.io/postgres:14.2-alpine"
@@ -24,7 +24,7 @@
           - name: django
         restart: "yes"
 
-    - name: Create default containers
+    - name: Create Django containers
       community.docker.docker_container:
         name: "django"
         image: "docker.io/matt2022dockertp/django:nightly"

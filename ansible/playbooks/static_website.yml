@@ -15,7 +15,7 @@
         image: "docker.io/postgres:14.2-alpine"
         state: started
         volumes:
-          - Postgres-datas:/var/lib/postgresql/data
+          - postgres-datas:/var/lib/postgresql/data
         env:
           POSTGRES_DB: postgres
           POSTGRES_USER: postgres

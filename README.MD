@@ -44,7 +44,7 @@ The 2 worker nodes are deployed using `vagrant` files given by EAZYTraining
 
 ## #6 Security
 
-We didn't hardened our PoC as it's a Poc with harcoded password (exept for github and Docker hub) default python http server and so on, we well know that !
+We didn't hardened our PoC as it's a Poc with harcoded password (except for github and Docker hub) default python http server and so on, we well know that !
 
 ## #7 how to
 
